@@ -1,23 +1,27 @@
 import pika
-import json
+import time
 
 class EventConsumer:
-    def __init__(self) -> None:
-        self.connection = None
-        self.channel = None
+    def __init__(self, queue_name) -> None:
+        self.queue_name = queue_name
 
+    #Competing consumer
     def initalize_connection(self):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(
-            "localhost", credentials=pika.PlainCredentials("guest", "guest")))
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters('localhost', credentials=pika.PlainCredentials("guest", "guest")))
         channel = connection.channel()
-        channel.queue_declare(queue='EmailService')
 
+        channel.queue_declare(queue=self.queue_name, durable=True)
+        channel.basic_qos(prefetch_count=1)
 
-        channel.basic_consume(queue='EmailService', auto_ack=True, on_message_callback=self.callback)
+        #Needs implementation
+        def callback(ch, method, properties, body):
+            pass
+        
+        channel.basic_consume(queue=self.queue_name, on_message_callback=callback)
         channel.start_consuming()
+
     
-    def callback(self, ch, method, properties, body):
-            return body
 
 
 
