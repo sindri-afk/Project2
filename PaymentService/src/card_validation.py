@@ -1,18 +1,24 @@
 
 from pydantic import BaseModel, conint
 
-class CreditCard(BaseModel):
+class aCreditCard(BaseModel):
     cardNumber = str
     expirationMonth = conint(ge=1, le=12)
     expirationYear = int
     cvc = conint(ge=100, le=999)
+
+class CreditCard:
+    def __init__(self, cardNumber, expirationMonth, expirationYear, cvc) -> None:
+        self.cardNumber = cardNumber
+        self.expirationMonth = expirationMonth
+        self.expirationYear = expirationYear
+        self.cvc = cvc
 
 
 
 class CardValidator:
     def __init__(self, credit_card: CreditCard) -> None:
         self.credit_card = credit_card
-        self.FILE_PATH = 'card_validations.txt'
     
     def validate_card_number(self):
 
@@ -54,3 +60,4 @@ class CardValidator:
         if pan_result+expiration_result+cvc_result == 3:
             return True
         return False
+    

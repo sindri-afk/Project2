@@ -2,7 +2,7 @@ import pika
 import time
 
 
-'''Hægt að gera instance af hvaða queue consumerinn á að consuma frá'''
+
 class EventConsumer:
     def __init__(self, queue_name) -> None:
         self.queue_name = queue_name

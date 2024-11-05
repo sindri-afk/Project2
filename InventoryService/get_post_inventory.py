@@ -65,7 +65,7 @@ async def get_all_product():
 async def get_product_by_id(id: int):
     product = inventory_manager.get_product_with_id(id)
     if product is None:
-        raise HTTPException(status_code=404, detail='does not exist?')
+        raise HTTPException(status_code=404, detail='Product does not exist')
     return product
 
 if __name__ == "__main__":

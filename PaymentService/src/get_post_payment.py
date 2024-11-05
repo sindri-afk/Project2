@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from card_validation import CreditCard
+from PaymentService.src.card_validation import CreditCard
 import json
 import os
 
