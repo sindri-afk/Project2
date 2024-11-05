@@ -32,3 +32,4 @@ class EventConsumer:
     
     def get_message(self):
         return self.last_message
+    
