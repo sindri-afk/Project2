@@ -8,6 +8,7 @@ class EmailOrderProducer:
         self.rabbitmq_host = rabbitmq_host
         self.order_queue = order_queue
         self.payment_queue = payment_queue
+        self.missing_ids = []
 
         #Rabbitmq
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.rabbitmq_host))

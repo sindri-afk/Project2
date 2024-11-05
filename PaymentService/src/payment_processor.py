@@ -51,6 +51,7 @@ class PaymentProducer:
         event = body.decoded()
         try:
             data = json.loads(event)
+            order_id = data.get('orderId')
             credit_card = data.get('creditCard', {})
             cardNumber = credit_card.get('cardNumber')
             expirationMonth = credit_card.get('expirationMonth')
@@ -58,13 +59,12 @@ class PaymentProducer:
             cvc = credit_card.get('cvc')
 
             card_checker = CreditCard(cardNumber, expirationMonth, expirationYear, cvc)
-            self.order_id += 1
             if self.validate_card(card_checker) == True:
-                self.save_payments(self.order_id, 'success')
-                self.publish_payment(self.order_id, 'success')
+                self.save_payments(order_id, 'success')
+                self.publish_payment(order_id, 'success')
             else:
-                self.save_payments(self.order_id, 'failure')
-                self.publish_payment(self.order_id, 'failure')
+                self.save_payments(order_id, 'failure')
+                self.publish_payment(order_id, 'failure')
         except json.JSONDecodeError:
             pass
         except KeyError as e:
