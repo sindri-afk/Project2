@@ -6,10 +6,11 @@ import json
 app = FastAPI()
 
 class Product(BaseModel):
-    'merchantId' = int
-    'productName' = str
-    'price' = float
-    'quantity' = int
+    merchantId: int
+    productName: str
+    price: float
+    quantity: int
+    reserved: int = 0
 
 
 
@@ -29,4 +30,28 @@ class InventoryManagement:
         inventory = self.get_all_inventory()
         inventory.append(product.dict())
         self.save_inventory(inventory)
-        
+    
+    def get_product_with_id(self, product_id: int):
+        inventory = self.get_all_inventory()
+        for i in inventory:
+            if i['merchantId'] == product_id:
+                return i
+        return None
+    
+inventory_manager = InventoryManagement()
+
+@app.post("/products", status_code=201)
+async def create_product(product: Product):
+    inventory_manager.add_product(product)
+
+@app.get("/products", status_code=200)
+async def get_all_product():
+    return inventory_manager.get_all_inventory()
+
+@app.get("/products/{id}", status_code=200)
+async def get_product_by_id(id: int):
+    product = inventory_manager.get_product_with_id(id)
+    if product is None:
+        raise HTTPException(status_code=404)
+    return product
+
