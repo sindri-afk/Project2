@@ -88,3 +88,17 @@ class EmailOrderProducer:
             mail_sender.send_email(message.buyerMail, 'Order purchase failed', f'Order {message.orderId} purchase has failed')
             mail_sender.send_email(message.merchantMail, 'Order purchase failed', f'Order {message.orderId} purchase has failed')
 
+    def start_consuming(self):
+
+        def callback(ch, method, properties, body):
+            if method.routing_key == self.order_queue:
+                self.process_order(ch, method, properties, body)
+            elif method.routing_key == self.payment_queue:
+                self.process_payment(ch, method, properties, body)
+
+
+        self.channel.basic_consume(queue=self.order_queue, on_message_callback=callback)
+        self.channel.basic_consume(queue=self.payment_queue, on_message_callback=callback)
+
+        print("Waiting for messages...")
+        self.channel.start_consuming()

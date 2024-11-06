@@ -6,7 +6,7 @@ from card_validation import CardValidator, CreditCard
 
 
 class PaymentProducer:
-    def __init__(self, rabbitmq_host='rabbitmq', order_queue='order_created', payment_result_queue='payment_result', json_file='./PaymentService/card_validations.json'):
+    def __init__(self, rabbitmq_host='rabbitmq', order_queue='order_queue', payment_result_queue='payment_queue', json_file='./PaymentService/card_validations.json'):
         self.rabbitmq_host = rabbitmq_host
         self.order_queue = order_queue
         self.payment_result_queue = payment_result_queue
@@ -42,8 +42,8 @@ class PaymentProducer:
         result = validator.validate_card(credit_card)
         return result
 
-    def publish_payment(self, order_id, status):
-        result_event = json.dumps({'order_id': order_id, 'status':status})
+    def publish_payment(self, order_id, status, buyer_email, merchant_email):
+        result_event = json.dumps({'order_id': order_id, 'status':status, 'buyerEmail':buyer_email, 'merchantEmail':merchant_email})
         self.channel.basic_publish(exchange='', routing_key=self.payment_result_queue, body=result_event)
     
     def process_order_payment(self, ch, method, properties, body):
@@ -51,6 +51,8 @@ class PaymentProducer:
         try:
             data = json.loads(event)
             order_id = data.get('orderId')
+            buyerEmail = data.get('buyerEmail')
+            merchantEmail = data.get('merchantEmail')
             credit_card = data.get('creditCard', {})
             cardNumber = credit_card.get('cardNumber')
             expirationMonth = credit_card.get('expirationMonth')
@@ -60,10 +62,10 @@ class PaymentProducer:
             card_checker = CreditCard(cardNumber, expirationMonth, expirationYear, cvc)
             if self.validate_card(card_checker) == True:
                 self.save_payments(order_id, 'success')
-                self.publish_payment(order_id, 'success')
+                self.publish_payment(order_id, 'success', buyerEmail, merchantEmail)
             else:
                 self.save_payments(order_id, 'failure')
-                self.publish_payment(order_id, 'failure')
+                self.publish_payment(order_id, 'failure', buyerEmail, merchantEmail)
         except json.JSONDecodeError:
             pass
         except KeyError as e:
