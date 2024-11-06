@@ -1,0 +1,16 @@
+[
+    {
+        "merchantId": 1,
+        "productName": "Sample Product",
+        "price": 123.0,
+        "quantity": 20,
+        "reserved": 5
+    },
+    {
+        "merchantId": 2,
+        "productName": "Lego Batman the Video Game",
+        "price": 69.99,
+        "quantity": 20,
+        "reserved": 19
+    }
+]

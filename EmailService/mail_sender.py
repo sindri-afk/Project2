@@ -1,9 +1,9 @@
 import os
 from sendgrid.helpers.mail import Mail
 from sendgrid import SendGridAPIClient
-from dotenv import load_dotenv
 
-load_dotenv()
+
+
 
 class MailSender:
     def send_email(self, to_email, subject, html_content):
