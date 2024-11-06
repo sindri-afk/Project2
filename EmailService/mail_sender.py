@@ -5,6 +5,8 @@ from sendgrid import SendGridAPIClient
 
 
 
+
+
 class MailSender:
     def send_email(self, to_email, subject, html_content):
         message = Mail(

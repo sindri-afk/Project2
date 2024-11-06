@@ -1,4 +1,4 @@
-from EmailService.email_producer import EventConsumer
+from EmailService.email_producer_old import EventConsumer
 from mail_sender import MailSender
 import threading
 

@@ -11,7 +11,6 @@ class PaymentProducer:
         self.order_queue = order_queue
         self.payment_result_queue = payment_result_queue
         self.json_file = json_file
-        self.order_id = 1
         
         #RabbitMQ
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.rabbitmq_host))
